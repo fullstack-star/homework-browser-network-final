@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CORS 请求</title>
+</head>
+<body>
+  <button id="test">click me</button>
+  <p id="show"></p>
+  <script>
+    /**
+       本地使用 http-server 服务，前端html页面,运行在 127.0.0.1:8081 上
+       node服务运行在 127.0.0.1:8888 上，模拟跨域请求。
+    */
+
+    window.onload = function () {
+      const btn = document.querySelector('#test')
+      const p = document.querySelector('#show')
+      let retryTimes = 0; // 重复请求次数
+      let retryMaxTimes = 2; // 最大重复请求次数
+      let method = 'POST' // 请求方法
+      let url = 'http://127.0.0.1:8888/'; // 请求地址
+      let body = { say: 'hello' } // 请求发送实体
+      let xhr = null // XMLHttpRequest 对象
+
+      btn.addEventListener('click', function (e) {
+        p.innerHTML = '请求中...';
+        xhr = getXHRObj()
+      })
+
+
+      // 请求成功的回调
+      function handler(e) {
+        if(xhr === XMLHttpRequest.DONE && xhe.status === 200) {
+          p.innerHTML = '请求成功：' + xhr.responseText;
+        }
+      }
+
+      // 超时重新请求
+      function timeoutHandler (e) {
+        if (retryTimes < retryMaxTimes) {
+          xhr.abort()
+          xhr = getXHRObj()
+          retryTimes ++
+          p.innerHTML = '重新请求第' + retryTimes + '次';
+        } else {
+          p.innerHTML = '请求失败，请稍后重试。';
+        }
+      }
+
+     const getXHRObj = function () {
+
+        let invocation = new XMLHttpRequest();
+
+        invocation.timeout = 1000 // 设置超时时间
+        invocation.open(method, url, true) 
+        invocation.onreadystatechange = handler;
+        invocation.ontimeout = timeoutHandler; invocation.withCredentials = true; // 携带 cookie 或者授权 header 
+        invocation.send(JSON.stringify(body)); 
+
+        return invocation;
+      }
+
+    }
+
+  </script>
+</body>
+</html>

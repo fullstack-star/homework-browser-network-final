@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CORS 请求</title>
+</head>
+<body>
+  <button id="test">click me</button>
+  <script>
+    /**
+       本地使用 http-server 服务，前端html页面,运行在 127.0.0.1:8081 上
+       node服务运行在 127.0.0.1:8888 上，模拟跨域请求。
+    */
+    window.onload = function () {
+      document.querySelector('#test').addEventListener('click', function (e) {
+        let invocation = new XMLHttpRequest();
+        let url = 'http://127.0.0.1:8888/';
+
+        let body = { say: 'hello' }
+
+        invocation.open('POST', url, true) 
+        invocation.onreadystatechange = handler;
+        invocation.withCredentials = true; // 携带 cookie 或者授权 header 
+        invocation.send(JSON.stringify(body)); 
+
+        function handler(res) {
+          if(invocation.readyState === XMLHttpRequest.DONE && invocation.status === 200) {
+            console.log('@@ res ', invocation.responseText)
+          }
+        }
+
+      })
+    }
+
+  </script>
+</body>
+</html>
