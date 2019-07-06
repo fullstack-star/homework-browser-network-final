@@ -62,7 +62,7 @@
       const loading = document.querySelector('.loading')
       let myToast = document.querySelector('.my-toast')
       
-      let errCount = 2
+      let errCount = 1
       function getData(isRetry) {
         fetchData().then(res => {
           console.log(res)
@@ -81,7 +81,16 @@
       }
       getData()
       loadError.onclick = function() {
-        getData()
+        getData()        
+        fetch('http://localhost:8089',{
+          mode: 'cors',
+          credentials: 'include'
+        }).then(res => {
+          console.log(res)
+          res.json().then(d => {
+            console.log(d)
+          })
+        })
       }
     </script>
 	</body>
