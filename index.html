@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>CORS</title>
+</head>
+<body>
+<h2>1.CORS头信息 - 响应头</h2>
+<table width="100%" border="1" cellpadding="0" cellspacing="0">
+    <tr>
+        <th>序号</th>
+        <th>字段名</th>
+        <th>示例</th>
+        <th>作用</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Access-Control-Allow-Origin</td>
+        <td>Access-Control-Allow-Origin: &lt;origin&gt; | *</td>
+        <td>
+            其中，origin 参数的值指定了允许访问该资源的外域 URI。对于不需要携带身份凭证的请求，服务器可以指定该字段的值为通配符，表示允许来自所有域的请求。
+        </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Access-Control-Expose-Headers</td>
+        <td>Access-Control-Expose-Headers: X-My-Custom-Header, X-Another-Custom-Header</td>
+        <td>
+            在跨域访问时，XMLHttpRequest对象的getResponseHeader()方法只能拿到一些最基本的响应头，Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma，如果要访问其他头，则需要服务器设置本响应头。
+        </td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Access-Control-Max-Age</td>
+        <td>Access-Control-Max-Age: &lt;delta-seconds&gt;</td>
+        <td>
+            delta-seconds 参数表示preflight请求的结果在多少秒内有效。
+        </td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Access-Control-Allow-Credentials</td>
+        <td>Access-Control-Allow-Credentials: true</td>
+        <td>
+            Access-Control-Allow-Credentials 头指定了当浏览器的credentials设置为true时是否允许浏览器读取response的内容。当用在对preflight预检测请求的响应中时，它指定了实际的请求是否可以使用credentials。请注意：简单 GET 请求不会被预检；如果对此类请求的响应中不包含该字段，这个响应将被忽略掉，并且浏览器也不会将相应内容返回给网页。
+        </td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Access-Control-Allow-Methods</td>
+        <td>Access-Control-Allow-Methods: &lt;method&gt;[, &lt;method&gt;]*</td>
+        <td>
+            其指明了实际请求所允许使用的 HTTP 方法。
+        </td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Access-Control-Allow-Headers</td>
+        <td>Access-Control-Allow-Headers: <field-name>[, <field-name>]*</td>
+        <td>
+            用于预检请求的响应。其指明了实际请求中允许携带的首部字段。
+        </td>
+    </tr>
+</table>
+
+<h2>2.CORS头信息 - 请求头</h2>
+<table width="100%" border="1" cellpadding="0" cellspacing="0">
+    <tr>
+        <th>序号</th>
+        <th>字段名</th>
+        <th>示例</th>
+        <th>作用</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Origin;</td>
+        <td>Origin: &lt;origin&gt;</td>
+        <td>
+            origin 参数的值为源站 URI。它不包含任何路径信息，只是服务器名称。
+        </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Access-Control-Request-Method</td>
+        <td>Access-Control-Request-Method:  &lt;method &gt;</td>
+        <td>
+            将实际请求所使用的 HTTP 方法告诉服务器。
+        </td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Access-Control-Request-Headers</td>
+        <td>Access-Control-Request-Headers: &lt;field-name&gt;[, &lt;field-name&gt;]*</td>
+        <td>
+            将实际请求所携带的首部字段告诉服务器。
+        </td>
+    </tr>
+</table>
+
+<h2>3.CORS 带上 Cookie</h2>
+<textarea rows="15" style="width: 100%">
+    // 1. 首先服务器需要配置
+    Access-Control-Allow-Credentials: true
+
+    // 2. 浏览器端设置 ajax为例子
+    $.ajax({
+        url: 'https://...',
+        type: 'GET',
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function (data) {
+           // do...
+        }
+    });
+</textarea>
+
+<h2>4.http 失败重试</h2>
+<textarea rows="30" style="width: 100%">
+    // 重试函数
+    function retry(fn, count, time) {
+        count = count || 3;
+        time = time || 1000;
+        try {
+            fn();
+        } catch(err) {
+            if (count > 0) {
+                console.log(err);
+                setTimeout(() => {
+                    retry(fn, --count)
+                }, time)
+            }
+        }
+    }
+
+    // 发一个ajax请求
+    const testFnu = function() {
+        $.ajax({
+            url: 'https://...',
+            type: 'GET'
+        }).then( res => {
+            // do...
+        }, err => {
+            throw new Error(err)
+        });
+    };
+
+    retry(testFnu, 3, 1000);
+</textarea>
+</body>
+</html>
