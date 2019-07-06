@@ -1,0 +1,62 @@
+
+<!-- 1、简单请求（响应头）
+（1）Access-Control-Allow-Origin(必须)-
+该请求头必须包含在所有合法的CORS响应头中；否则，省略该响应头会导致CORS请求失败。该值要么与请求头Origin的值一样（如上述例子），要么设置成星号‘*’，以匹配任意Origin。
+（2）Access-Control-Allow-Credentials(可选)-
+默认情况下，发送CORS请求，cookies是不会附带发送的。但是，通过使用该响应头就可以让cookies包含在CORS请求中。注意，该响应头只有唯一的合法值true（全部小写）。如果你不需要cookies值，就不要包含该响应头了，而不是将该响应头的值设置成false。
+（3）Access-Control-Expose-Headers(可选)-
+XMLHttpRequest2对象有一个getResponseHeader()方法，该方法返回一个特殊响应头值。在一个CORS请求中，getResponseHeader()方法仅能获取到简单的响应头,如 .Cache-Control, .Content-Language, .Content-Type, .Expires, .Last-Modified,.Pragma
+
+2、非简单请求
+预检请求
+(1）请求头
+Access-Control-Request-Method：该字段表示实际的CORS是什么HTTP方法，如上述的PUT方法，且该字段是必须的，即使是简单请求的方法（GET，POST，HEAD）。
+Access-Control-Request-Headers：该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，如上述的X-Custom-Header。
+(2）响应头
+Access-Control-Allow-Origin(必须)—
+和简单请求一样，预检查响应也必须包含该头部，具体描述详见简单请求中的Access-Control-Allow-Origin。
+Access-Control-Allow-Methods(必须)-
+它是逗号分隔的一个字符串，值由HTTP方法构成，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。因为已提过预检查请求可以被缓存，所以这样可以避免多次"预检"请求。
+Access-Control-Allow-Headers-
+如果浏览器请求包括Access-Control-Request-Headers字段，则该字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在"预检"中请求的字段，因为可以缓存嘛。
+Access-Control-Allow-Credentials(可选)—
+和简单请求一样，详见上述简单请求中的该字段。
+Access-Control-Max-Age(可选)-
+如果每次发起一个非简单的CORS请求，都暗地向服务器发送两次请求，那代价也太大了点，所以该字段可以指定预检查请求可以被缓存多少秒。 -->
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>CORS</title>
+
+</html>
+
+<body>
+    <script>
+    //  CORS 跨域请求带上 cookie
+        function withCookie(url,method) {
+            const xhr = new XMLHttpRequest();
+            xhr.open(method, url, true);
+            xhr.withCredentials = true;
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send();
+        }
+
+        //  http 请求失败后重试
+        async function retry(fun, args, interval, count=0) {
+            try {
+                await fun(args);
+            } catch {
+                if (frequency > 0) {
+                    frequency -= 1;
+                    setTimeout(function () {
+                        retry(fun, args, interval, ++count);
+                    }, interval);
+                }
+            }
+        }
+    </script>
+</body>
