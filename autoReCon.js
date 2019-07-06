@@ -40,14 +40,14 @@ class Service {
   // 重试控制
   static retryControl(name) {
     const self = this
-    let index = self.timeGaps.indexOf(self.requestGaps[name]);
-    if (index < self.timeGaps.length - 1) {
-      index += 1;
-      self.requestGaps[name] = self.timeGaps[index];
+    let preIndex = self.requestGaps[name] || 0
+    const timeGap = self.timeGaps[preIndex]
+    if (timeGap) {
+      self.requestGaps[name] = ++preIndex;
       setTimeout(() => {
         // 重新发送请求，清除时直接跳过
         self.requestMap[name] && self.requestMap[name]();
-      }, 1000 * self.timeGaps[index]);
+      }, 1000 * timeGap);
     } else {
       // 超过请求次数，不再请求
       self.clearRequestMap(name);
