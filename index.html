@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Test</title>
+    <style type="text/css">
+      @keyframes myrotate {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+      }
+      .center{
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .loading{
+        display: none;
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        line-height: 100px;
+        text-align: center;
+      }
+      .loading>span{
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+        border-top: 1px solid red;
+        border-bottom: 1px solid green;
+        animation: myrotate 1s linear infinite;
+      }
+      .loaderror{
+        display: none;
+        cursor: pointer;
+        text-align: center;
+        font-size: 28px;
+        color: red;
+        margin-top: 100px;
+      }
+      .my-toast{
+        display: none;
+        position: fixed;
+        padding: 20px 30px;
+        text-align: center;
+        background: rgba(0,0,0,.5);
+        color: #fff;
+        border-radius: 10px;
+      }
+    </style>
+	</head>
+	<body>
+    <div class="loaderror">数据加载失败点我重新加载</div>
+    <div class="loading center">加载中...<span></span></div>
+    <div class="my-toast center"></div>
+    <script src="./utils.js"></script>
+    <script>
+      const loadError = document.querySelector('.loaderror')
+      const loading = document.querySelector('.loading')
+      let myToast = document.querySelector('.my-toast')
+      
+      let errCount = 1
+      function getData(isRetry) {
+        fetchData().then(res => {
+          console.log(res)
+        }).catch(err => {
+          if (errCount > 0) {
+            showRetry('加载失败，正在准备重试...', 5000)
+            setTimeout(() => {
+              getData(true)
+            }, 5000)
+            errCount--
+          } else {
+            loadingError()
+          }
+          console.log(err)
+        })
+      }
+      getData()
+      loadError.onclick = function() {
+        getData()        
+        fetch('http://localhost:8089',{
+          mode: 'cors',
+          credentials: 'include'
+        }).then(res => {
+          console.log(res)
+          res.json().then(d => {
+            console.log(d)
+          })
+        })
+      }
+    </script>
+	</body>
+</html>
