@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>CORS跨域</title>
+	</head>
+	<body>
+		<script src="https://cdn.bootcss.com/jquery/3.1.0/jquery.js"></script>
+		<script>
+			$.ajax({
+                url: "http://127.0.0.1:8088",
+                type: "post",
+                crossDomain: true,
+                data: {
+                    host: window.location.host
+                },
+                xhrFields: {
+                    withCredentials: true// 设置为true表示跨域请求带上Cookie
+                },
+                success: function (data) {
+                    console.log(data)
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+			});
+		</script>
+	</body>
+</html>
