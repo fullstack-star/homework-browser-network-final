@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>CORS标准的跨域测试</title>
+	<link rel="stylesheet" href="./normalize.css">
+	<link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+	<h2>CORS标准方案的跨域测试</h2>
+	<p class="summary">学习正确配置客户端和服务端的cors相关请求头。<br>学习使用重连策略。</p>
+	<p>
+		<br>
+		打开devtools-network,查看返回结果。
+	</p>
+
+	<div class="operate j-choice">
+		<form name="choice">
+			<p>CORS设置：</p>
+			<label><input type="checkbox" data-type="client" name="client" checked><span>客户端带上相关头部</span></label>
+			<label><input type="checkbox" data-type="server" name="server" checked><span>服务端带上相关头部</span></label>
+			<p>请求无响应时：</p>
+			<label><input type="checkbox" data-type="reconnect" name="reconnect" checked disabled><span>自动重连</span></label>
+		</form>
+	</div>
+
+	<div class="operate j-operate">
+		<p>点击任意一个按钮，发起异步请求：</p>
+		<button class="btn" data-type="xhr">
+			<span class="txt">XMLHttpRequest</span>
+		</button>
+		<button class="btn" data-type="fetch">
+			<span class="txt">fetch</span></button>
+	</div>
+
+	<script src="./index.js" type="module"></script>
+</body>
+
+</html>
