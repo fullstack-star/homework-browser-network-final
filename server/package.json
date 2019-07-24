@@ -1,0 +1,9 @@
+{
+	"name": "server",
+	"version": "1.0.0",
+	"description": "跨域方案cors",
+	"scripts": {
+		"dev:debug": "node --inspect-brk ./src/index.js",
+		"dev": "node ./src/index.js"
+	}
+}
